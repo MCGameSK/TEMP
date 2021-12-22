@@ -1,0 +1,23 @@
+function GetWon(n: number) :: text:
+
+    set {_t} to "%round({_n})%"
+
+    loop round up length of {_t} / 3 times:
+        set {_l} to last 3 characters of {_t}
+        set {_t} to first length of {_t} - 3 characters of {_t}
+
+        if loop-number = 1:
+            set {_r} to "%{_l}%"
+        else:
+            set {_r} to "%{_l}%,%{_r}%"
+
+    return {_r}
+
+
+
+function GetAmount(p: player, item: item) :: integer:
+	loop 36 times:
+		if 1 of slot loop-number - 1 of inventory of {_p} is {_item}:
+			add item amount of slot loop-number - 1 of inventory of {_p} to {_amount}
+
+	return {_amount}
