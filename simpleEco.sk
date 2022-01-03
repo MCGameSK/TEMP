@@ -1,5 +1,6 @@
-#Simple Economy Sys M5B
-#Required sk-reflect
+#
+#Github https://github.com/MCGameSK
+#
 
 
 
@@ -23,7 +24,7 @@ on load:
     set {_meta} to {manual}.getItemMeta()
     {_meta}.setTitle("manual")
     {_meta}.setAuthor("server")
-    {_meta}.addPage("&3&l&o스타듀밸리 맛 &8&l&o가이드북&r%nl%%nl%%nl%&8어쩌구%nl%%nl%&6&l» &8낚시, 광질, 농사로 돈벌고%nl%&6&l» &8건축재료 구매%nl%&6&l» &8유저와 교환%nl%&6&l» &8/actp 죽은자리TP%nl%%nl%%nl%%nl%%nl%&8&l&o~뒷장에 컨텐츠 설명")
+    {_meta}.addPage("&3&l&o스타듀밸리 맛 &8&l&o가이드북&r%nl%%nl%%nl%&6&l» &8우클릭으로 물고기판매%nl%%nl%&6&l» &8사망시 랜덤템 귀속%nl%%nl%&6&l» &8100원 내고 돌려받자%nl%%nl%%nl%%nl%%nl%%nl%&8&l&o~뒷장에 컨텐츠 설명")
     #{_meta}.addPage("&2&l&o[ 농사 편의성 ]&r%nl%%nl%%nl%&6&l» &8작물 우클릭시%nl%자동으로 캐고, 심음%nl%%nl%&6&l» &8직접 캔 작물은%nl%더 비싸게 팔아먹음%nl%%nl%&6&l» &8밀, 비트, 당근, 감자, 호박, 수박이 해당함")
 
     {manual}.setItemMeta({_meta})
