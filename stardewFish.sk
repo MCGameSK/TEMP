@@ -1,0 +1,592 @@
+#
+#Github https://github.com/MCGameSK
+#
+
+
+
+import:
+    org.bukkit.inventory.ItemFlag
+
+
+
+options:
+    ChanceContest: 20 #chance out of 100
+    DelayContest: 20 #minutes
+    NeedPlayerAmountContest: 1
+
+    PriceNormal: 25
+    PriceRare: 200
+    PriceUnique: 40000
+    PriceHidden: 50000
+
+
+
+on load:
+
+    delete {contestOpen}
+    delete {contestRemaining}
+    delete {contestCurrentReward}
+    delete {contestLeadPlayer}
+    delete {contestPlayerGoal::*}
+
+    delete {normalFish::*}
+    delete {rareFish::*}
+    delete {uniqueFish::*}
+    delete {hiddenFish::*}
+
+    set {_fishData} to clay ball named "&f날개다랑어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550201
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f멸치" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550202
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball of fortune named "&4블롭피쉬" with lore "&7&l&r " and "&8[ 숨겨진 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550203
+    add {_fishData} to {hiddenFish::*}
+
+    set {_fishData} to clay ball named "&b블루 디스커스" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550204
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball named "&f도미" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550205
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f눈동자개" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550206
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f잉어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550207
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f메기" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550208
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f피라미" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550209
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&b만새기" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550210
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball named "&f장어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550211
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&b가자미" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550212
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball of fortune named "&d귀신물고기" with lore "&7&l&r " and "&8[ 매우 희귀한 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550213
+    add {_fishData} to {uniqueFish::*}
+
+    set {_fishData} to clay ball named "&7녹색 조류" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550214
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f넙치" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550215
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f청어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550216
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f아이스핍" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550217
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f큰입우럭" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550218
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&b범노래미" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550219
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball named "&f쏠배감펭" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550220
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball of fortune named "&4자정잉어" with lore "&7&l&r " and "&8[ 숨겨진 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550221
+    add {_fishData} to {hiddenFish::*}
+
+    set {_fishData} to clay ball of fortune named "&4자정 오징어" with lore "&7&l&r " and "&8[ 숨겨진 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550222
+    add {_fishData} to {hiddenFish::*}
+
+    set {_fishData} to clay ball named "&b문어" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550223
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball named "&f농어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550224
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f강꼬치고기" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550225
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f무지개 송어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550226
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f숭어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550227
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f붉은 퉁돔" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550228
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f도루묵" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550229
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f정어리" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550230
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball of fortune named "&d전갈잉어" with lore "&7&l&r " and "&8[ 매우 희귀한 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550231
+    add {_fishData} to {uniqueFish::*}
+
+    set {_fishData} to clay ball named "&b해삼" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550232
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball named "&f전어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550233
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f슬라임잭" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550234
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f작은입우럭" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550235
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball of fortune named "&4통안어" with lore "&7&l&r " and "&8[ 숨겨진 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550236
+    add {_fishData} to {hiddenFish::*}
+
+    set {_fishData} to clay ball named "&f오징어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550237
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&b가오리" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550238
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball named "&f쑥치" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550239
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball of fortune named "&d철갑상어" with lore "&7&l&r " and "&8[ 매우 희귀한 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550240
+    add {_fishData} to {uniqueFish::*}
+
+    set {_fishData} to clay ball named "&f개복치" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550241
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball of fortune named "&d슈퍼 해삼" with lore "&7&l&r " and "&8[ 매우 희귀한 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550242
+    add {_fishData} to {uniqueFish::*}
+
+    set {_fishData} to clay ball named "&f타이거 송어" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550243
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&f틸라피아" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550244
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&b참치" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550245
+    add {_fishData} to {rareFish::*}
+
+    set {_fishData} to clay ball of fortune named "&d공허의 연어" with lore "&7&l&r " and "&8[ 매우 희귀한 ]" and " "
+    set {_meta} to {_fishData}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {_fishData}.setItemMeta({_meta})
+    set custom model data of {_fishData} to 550246
+    add {_fishData} to {uniqueFish::*}
+
+    set {_fishData} to clay ball named "&f월아이" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550247
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&7흰색 조류" with lore "&7&l&r " and "&8[ 흔한 ]" and " "
+    set custom model data of {_fishData} to 550248
+    add {_fishData} to {normalFish::*}
+
+    set {_fishData} to clay ball named "&b숲고기" with lore "&7&l&r " and "&8[ 조금 희귀한 ]" and " "
+    set custom model data of {_fishData} to 550249
+    add {_fishData} to {rareFish::*}
+
+
+
+    set {contestStartCoupon} to paper of unbreaking named "&a&l낚시 대회 개최 쿠폰" with lore "&8&o우클시 낚시 대회를 강제로 개최합니다."
+    set {_meta} to {contestStartCoupon}.getItemMeta()
+    {_meta}.addItemFlags([ItemFlag.HIDE_ENCHANTS])
+    {contestStartCoupon}.setItemMeta({_meta})
+
+
+
+on fish:
+    if "%event.getState()%" is "CAUGHT_FISH":
+
+        set {_fish} to event.getCaught()
+
+        if item of {_fish} is cod:
+
+            set item of {_fish} to random element of {normalFish::*}
+
+            #Contest
+            if {contestOpen} is true:
+                add 1 to {contestPlayerGoal::%player's uuid%}
+                set {_lead} to true
+                loop {contestPlayerGoal::*}:
+                    if loop-index is not player's uuid:
+                        if {contestPlayerGoal::%player's uuid%} <= loop-value:
+                            set {_lead} to false
+                        
+                if {_lead} is true:
+                    if {contestLeadPlayer} is not player:
+                        broadcast "&e&l[ 낚시 대회 ] &f&o%player%이(가) 앞서고 있습니다."
+                        set {contestLeadPlayer} to player
+            #
+            exit
+
+
+
+        else if item of {_fish} is salmon:
+
+            set item of {_fish} to random element of {normalFish::*}
+
+            #Contest
+            if {contestOpen} is true:
+                add 1 to {contestPlayerGoal::%player's uuid%}
+                set {_lead} to true
+                loop {contestPlayerGoal::*}:
+                    if loop-index is not player's uuid:
+                        if {contestPlayerGoal::%player's uuid%} <= loop-value:
+                            set {_lead} to false
+                        
+                if {_lead} is true:
+                    if {contestLeadPlayer} is not player:
+                        broadcast "&e&l[ 낚시 대회 ] &f&o%player%이(가) 앞서고 있습니다."
+                        set {contestLeadPlayer} to player
+            #
+            exit
+
+
+
+        else if item of {_fish} is tropical fish:
+
+            set {_getPoint} to 1
+
+            if time in world is between 2:00 and 22:00:
+                if chance of 0.5%:
+                    set item of {_fish} to random element of {uniqueFish::*}
+                    broadcast "&d%player%이(가) &r%name of item of {_fish}%&r&d을(를) 낚았습니다!"
+                    play sound "entity.ender_eye.death" with volume 1 for all players
+                    set {_getPoint} to 50
+                else:
+                    set item of {_fish} to random element of {rareFish::*}
+            else:
+                if chance of 0.1%:
+                    set item of {_fish} to random element of {uniqueFish::*}
+                    broadcast "&d%player%이(가) &r%name of item of {_fish}%&r&d을(를) 낚았습니다!"
+                    play sound "entity.ender_eye.death" with volume 1 for all players
+                    set {_getPoint} to 50
+                else if chance of 2%:
+                    set item of {_fish} to random element of {hiddenFish::*}
+                    broadcast "&d%player%이(가) &r%name of item of {_fish}%&r&d을(를) 낚았습니다!"
+                    play sound "entity.ender_eye.death" with volume 1 for all players
+                    set {_getPoint} to 50
+                else:
+                    set item of {_fish} to random element of {rareFish::*}
+
+            #Contest
+            if {contestOpen} is true:
+                add {_getPoint} to {contestPlayerGoal::%player's uuid%}
+                set {_lead} to true
+                loop {contestPlayerGoal::*}:
+                    if loop-index is not player's uuid:
+                        if {contestPlayerGoal::%player's uuid%} <= loop-value:
+                            set {_lead} to false
+                        
+                if {_lead} is true:
+                    if {contestLeadPlayer} is not player:
+                        broadcast "&e&l[ 낚시 대회 ] &f&o%player%이(가) 앞서고 있습니다."
+                        set {contestLeadPlayer} to player
+            #
+            exit
+
+
+
+        else if item of {_fish} is pufferfish:
+
+            set {_getPoint} to 1
+
+            if chance of 8%:
+                set item of {_fish} to random element of {rareFish::*}
+                set {_getPoint} to 6
+            else:
+                set item of {_fish} to random element of {normalFish::*}
+
+            #Contest
+            if {contestOpen} is true:
+                add {_getPoint} to {contestPlayerGoal::%player's uuid%}
+                set {_lead} to true
+                loop {contestPlayerGoal::*}:
+                    if loop-index is not player's uuid:
+                        if {contestPlayerGoal::%player's uuid%} <= loop-value:
+                            set {_lead} to false
+                        
+                if {_lead} is true:
+                    if {contestLeadPlayer} is not player:
+                        broadcast "&e&l[ 낚시 대회 ] &f&o%player%이(가) 앞서고 있습니다."
+                        set {contestLeadPlayer} to player
+            #
+            exit
+
+
+
+on player's held item change:
+    if player's held item is fishing rod:
+        if {contestOpen} is true:
+            if {contestPlayerGoal::%player's uuid%} is set:
+                send action bar "&f&l현재 점수 : &6&l%{contestPlayerGoal::%player's uuid%}% &7&o[ %{contestRemaining}%분 남음 ]" to player
+            else:
+                send action bar "&f&l현재 점수 : &6&l0 &7&o[ %{contestRemaining}%분 남음 ]" to player
+        else:
+            send action bar "&4&l진행중인 낚시대회가 없습니다" to player
+
+
+
+on right click:
+    if 1 of player's tool is {contestStartCoupon}:
+        cancel event
+
+        if {contestReward::*} is not set:
+            message "&c&o보상이 설정되지 않았습니다."
+            exit
+
+        if {contestOpen} is true:
+            message "&c&o낚시 대회가 이미 진행중입니다."
+            exit
+
+        set {_tempSlot} to player's tool
+        set {_i} to item amount of {_tempSlot} - 1
+        set player's tool to {_i} of {_tempSlot}
+
+        broadcast "&e&l%player%이(가) 낚시 대회를 개최합니다."
+        execute console command "/faContestForceStart"
+
+
+
+on inventory click:
+    if event-inventory is player's inventory:
+        if click type is right mouse button:
+            if "%type of clicked slot%" is "clay":
+                if {normalFish::*} contain 1 of clicked slot:
+                    add {@PriceNormal} * item amount of clicked slot to player's money
+                    message "&6&o+ ₩ %{@PriceNormal} * item amount of clicked slot% 판매"
+                    play sound "block.chain.place" with volume 1 and pitch 1.2 for player
+                    delete clicked slot
+                else if {rareFish::*} contain 1 of clicked slot:
+                    add {@PriceRare} * item amount of clicked slot to player's money
+                    message "&6&o+ ₩ %{@PriceRare} * item amount of clicked slot% 판매"
+                    play sound "block.chain.place" with volume 1 and pitch 1.2 for player
+                    delete clicked slot
+                else if {uniqueFish::*} contain 1 of clicked slot:
+                    add {@PriceUnique} * item amount of clicked slot to player's money
+                    message "&6&o+ ₩ %{@PriceUnique} * item amount of clicked slot% 판매"
+                    play sound "block.chain.place" with volume 1 and pitch 1.2 for player
+                    delete clicked slot
+                else if {hiddenFish::*} contain 1 of clicked slot:
+                    add {@PriceHidden} * item amount of clicked slot to player's money
+                    message "&6&o+ ₩ %{@PriceHidden} * item amount of clicked slot% 판매"
+                    play sound "block.chain.place" with volume 1 and pitch 1.2 for player
+                    delete clicked slot                
+
+
+
+every {@DelayContest} minutes:
+    if chance of {@ChanceContest}%:
+        if amount of all players > {@NeedPlayerAmountContest}:
+            execute console command "/faContestForceStart"
+
+
+
+every 1 minutes:
+    if {contestOpen} is true:
+        remove 1 from {contestRemaining}
+
+        if {contestRemaining} is 5:
+            if {contestLeadPlayer} is set:
+                broadcast "&e&l[ 낚시 대회 ] &c&o5&e&o분 남았습니다!"
+                broadcast " "
+                broadcast "&e&o최고 점수: &r&o%{contestLeadPlayer}%"
+            else:
+                broadcast "&e&l[ 낚시 대회 ] &c&o5&e&o분 남았습니다!"
+                broadcast " "
+                broadcast "&c&l참가자가 없습니다."
+        
+        if {contestRemaining} <= 0:
+
+            play sound "block.note_block.pling" with volume 1 and pitch 1.4 for all players
+
+            if {contestLeadPlayer} is set:
+                broadcast "&e&l[ 낚시 대회 ] &c&l종료"
+                broadcast " "
+                broadcast "&f&o%{contestLeadPlayer}%이(가) &6%{contestPlayerGoal::%{contestLeadPlayer}'s uuid%}%&f&o점으로 &a우승!"
+                broadcast "&e&o보상 지급: &r%name of {contestCurrentReward}% &e&oX %item amount of {contestCurrentReward}%"
+
+                if {contestLeadPlayer} has enough space for 1 of {contestCurrentReward}:
+                    give {contestLeadPlayer} {contestCurrentReward}
+                    message "&a&l인벤토리에 보상이 지급되었습니다." to {contestLeadPlayer}
+                else:
+                    drop {contestCurrentReward} at {contestLeadPlayer}'s head
+                    message "&a&l보상이 지급되었습니다. &c&l공간이 부족하여 &a&l아이템이 드랍됩니다." to {contestLeadPlayer}
+
+            else:
+                broadcast "&e&l[ 낚시 대회 ] &c&l종료, 우승자가 없습니다."
+
+            delete {contestOpen}
+            delete {contestRemaining}
+            delete {contestCurrentReward}
+            delete {contestLeadPlayer}
+            delete {contestPlayerGoal::*}
+
+
+
+command /faDropAllItems:
+    trigger:
+        if player is op:
+            message "&a&l모든 물고기를 드랍합니다."
+            drop {normalFish::*} at player
+            drop {rareFish::*} at player
+            drop {uniqueFish::*} at player
+            drop {hiddenFish::*} at player
+        else:
+            message "&c&oOP required"
+
+
+
+command /faContestRewardAdd:
+    trigger:
+        if player is op:
+            add player's held item to {contestReward::*}
+            message "&e&l낚시대회 보상 추가됨: &f&o%player's held item%"
+        else:
+            message "&c&oOP required"
+
+
+
+command /faContestRewardList:
+    trigger:
+        if player is op:
+            message "&a&l낚시대회 보상 리스트"
+            loop {contestReward::*}:
+                message "%loop-value%"
+        else:
+            message "&c&oOP required"
+
+
+
+command /faContestRewardRemove:
+    trigger:
+        if player is op:
+            delete {contestReward::*}
+            message "&c&l낚시대회 보상 제거됨"
+        else:
+            message "&c&oOP required"
+
+
+
+command /faContestForceStart:
+    trigger:
+        if command sender is op or console:
+            if {contestReward::*} is set:
+                if {contestOpen} is not set:
+                    set {contestOpen} to true
+
+                    set {contestCurrentReward} to random element of {contestReward::*}
+                    
+                    set {contestRemaining} to 2 * random integer between 3 and 6
+
+                    broadcast "&e&l[ 낚시 대회 ]"
+                    broadcast " "
+                    broadcast "&a&o%{contestRemaining}%&e&l분간 진행됩니다"
+                    if name of {contestCurrentReward} is not set:
+                        broadcast "&e&o보상: &r%type of {contestCurrentReward}% &e&oX %item amount of {contestCurrentReward}%"
+                    else:
+                        broadcast "&e&o보상: &r%name of {contestCurrentReward}% &e&oX %item amount of {contestCurrentReward}%"
+
+                    play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+                else:
+                    message "&c&o낚시 대회가 이미 진행중입니다."
+            else:
+                message "&c&o보상이 설정되지 않았습니다."
+        else:
+            message "&c&oOP required"
+
+
+
+command /faContestForceStop:
+    trigger:
+        if player is op:
+            delete {contestOpen}
+            delete {contestRemaining}
+            delete {contestCurrentReward}
+            delete {contestLeadPlayer}
+            delete {contestPlayerGoal::*}
+            broadcast "&c&l낚시 대회가 강제 종료되었습니다."
+        else:
+            message "&c&oOP required"
+
+
+
+command /faDropCoupon:
+    trigger:
+        if player is op:
+            drop {contestStartCoupon} at player
+            message "&a&l낚시 대회 시작 쿠폰을 드랍합니다."
+        else:
+            message "&c&oOP required"
