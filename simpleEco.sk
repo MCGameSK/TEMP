@@ -254,7 +254,11 @@ on inventory click:
                         remove {@GetBackCost} from player's money
                         message "&a분실물을 찾았습니다 &c[ 잔액: ₩ %GetWon(player's money)% ]"
                         play sound "entity.ender_eye.death" with volume 1 and pitch 1.6 for player
-
+#
+                        loop {lostItems::%player's uuid%::*}:
+                            if loop-value is {_clickedItem}:
+                                message "%{_clickedItem}%"
+#
                         if player has enough space for {_clickedItem}:
                             give player {_clickedItem}
                             remove {_clickedItem} from {lostItems::%player's uuid%::*}
