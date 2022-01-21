@@ -10,7 +10,7 @@ import:
 
 
 options:
-    GetBackCost: 100
+    GetBackCost: 50
 
 
 
@@ -24,8 +24,11 @@ on load:
     set {_meta} to {manual}.getItemMeta()
     {_meta}.setTitle("manual")
     {_meta}.setAuthor("server")
-    {_meta}.addPage("&3&l&o스타듀밸리 맛 &8&l&o가이드북&r%nl%%nl%%nl%&6&l» &8우클릭으로 물고기판매%nl%%nl%&6&l» &8사망시 랜덤템 귀속%nl%%nl%&6&l» &8100원 내고 돌려받자%nl%%nl%%nl%%nl%%nl%%nl%&8&l&o~뒷장에 컨텐츠 설명")
-    #{_meta}.addPage("&2&l&o[ 농사 편의성 ]&r%nl%%nl%%nl%&6&l» &8작물 우클릭시%nl%자동으로 캐고, 심음%nl%%nl%&6&l» &8직접 캔 작물은%nl%더 비싸게 팔아먹음%nl%%nl%&6&l» &8밀, 비트, 당근, 감자, 호박, 수박이 해당함")
+    {_meta}.addPage("&3&l&o스타듀밸리 맛 &8&l&o가이드북&r%nl%%nl%%nl%&6&l» &8우클릭으로 물고기판매%nl%%nl%&6&l» &8사망시 랜덤템 귀속%nl%%nl%&6&l» &850원 내고 돌려받자%nl%%nl%%nl%%nl%%nl%%nl%&8&l&o~뒷장에 컨텐츠 설명")
+    {_meta}.addPage("&2&l&o[ 낚시 ]&r%nl%%nl%%nl%&6&l» &8등급은 4가지 분류%nl%%nl%&6&l» &8인벤토리를 열고%nl%물고기 우클릭시 판매%nl%%nl%&6&l» &8힌트: 밤")
+    {_meta}.addPage("&2&l&o[ 유물 ]&r%nl%%nl%%nl%&6&l» &8광질을 하다보면%nl%정동석이 나옴%nl%%nl%&6&l» &8대장장이에게 가져가면%nl%정동석 분해가능%nl%%nl%&6&l» &8박물관에서%nl%기증할수 있다")
+    {_meta}.addPage("&2&l&o[ 강화 ]&r%nl%%nl%%nl%&6&l» &8방사능 광석 등%nl%도구와 재료를 들고%nl%손바꾸기로 강화%nl%%nl%&6&l» &8방사능 도구는%nl%성급함1 붙음")
+    {_meta}.addPage("&2&l&o[ 반지 ]&r%nl%%nl%%nl%&6&l» &8들고다니는 신호기임%nl%%nl%&6&l» &8종류별로 다양한%nl%포션효과 지속")
 
     {manual}.setItemMeta({_meta})
 
@@ -220,12 +223,16 @@ on inventory click:
                     message "&c&o엔더 상자를 해금해야합니다."
             
             #분실물센터
-            if index of clicked slot is 4:
+            if index of clicked slot is 3:
                 execute player command "/seLostAndFound"
 
                 play sound "block.note_block.chime" with volume 0.7 and pitch 1.8 for player
                 wait for 0.15 seconds
                 play sound "block.note_block.chime" with volume 0.7 and pitch 1.8 for player
+
+            #분실물센터
+            if index of clicked slot is 5:
+                execute player command "/relicBook"
 
 
 
@@ -281,7 +288,7 @@ command /seMenu:
     trigger:
         set {menu::%player's uuid%} to chest inventory with 3 rows named {menuName}
         
-        set slot 19 of {menu::%player's uuid%} to book named "&e&l서버 설명서"
+        set slot 19 of {menu::%player's uuid%} to map named "&e&l서버 설명서"
 
         set {_woodenSword} to wooden sword named "&ePvP" with lore "&7&oPvP 허용/비허용"
         set {_meta} to {_woodenSword}.getItemMeta()
@@ -299,7 +306,8 @@ command /seMenu:
             set slot 25 of {menu::%player's uuid%} to ("WildsEX" parsed as offline player)'s skull named "&e&l엔더 상자 열기"
         else:
             set slot 25 of {menu::%player's uuid%} to ("WildsEX" parsed as offline player)'s skull named "&e&l엔더 상자 열기" with lore "&4&o잠겨있습니다"
-        set slot 4 of {menu::%player's uuid%} to writable book named "&e&l분실물 센터" with lore "&7&o잃어버린 물건이 있으신가요?"
+        set slot 3 of {menu::%player's uuid%} to writable book named "&e&l분실물 센터" with lore "&7&o잃어버린 물건이 있으신가요?"
+        set slot 5 of {menu::%player's uuid%} to book named "&e&l유물 도감" with lore "&7&o기증한 유물이 등록됩니다"
 
 
 
@@ -317,8 +325,10 @@ command /seLostAndFound:
 
         set {_loopTimes} to 0
         loop {lostItems::%player's uuid%::*}:
-            set slot (9 + {_loopTimes}) of {lostAndFound::%player's uuid%} to paper named "&a%type of loop-value%" with lore "&e수량 : &e&o%item amount of loop-value%" and " " and "&6Click &a&l돌려받기" and "&6Drop key &c&l삭제"
-
+            if name of loop-value is set:
+                set slot (9 + {_loopTimes}) of {lostAndFound::%player's uuid%} to paper named "&a%name of loop-value%" with lore "&e수량 : &e&o%item amount of loop-value%" and " " and "&6Click &a&l돌려받기" and "&6Drop key &c&l삭제"
+            else:
+                set slot (9 + {_loopTimes}) of {lostAndFound::%player's uuid%} to paper named "&a%type of loop-value%" with lore "&e수량 : &e&o%item amount of loop-value%" and " " and "&6Click &a&l돌려받기" and "&6Drop key &c&l삭제"
             add 1 to {_loopTimes}
 
 
@@ -430,3 +440,18 @@ command /seEcUnlock [<player>]:
         else:
             message "&c&oOP required"
 
+
+
+command /seReset [<text>]:
+    trigger:
+        if player is op:
+            if arg 1 is "confirm":
+                message "&c에센셜 머니, 분실물 정보, 엔더 상자 해금 정보를 삭제합니다."
+                delete {lostItems::*}
+                delete {ecUnlock::*}
+                loop all offline players:
+                    set loop-value's money to 0
+            else:
+                message "&cYou have to confirm it"
+        else:
+            message "&c&oOP required"
