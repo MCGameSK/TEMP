@@ -257,7 +257,7 @@ on inventory click:
 #
                         loop {lostItems::%player's uuid%::*}:
                             if loop-value is {_clickedItem}:
-                                message "%{_clickedItem}%"
+                                message "%loop-value%"
 #
                         if player has enough space for {_clickedItem}:
                             give player {_clickedItem}
