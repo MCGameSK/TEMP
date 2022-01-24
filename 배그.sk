@@ -1,0 +1,188 @@
+on load:
+	delete {gameEnd}
+	
+	execute console command "/worldborder center 0 0"
+	execute console command "/worldborder set 4000 1"
+	execute console command "/minecraft:gamerule doDaylightCycle false"
+	execute console command "/scoreboard objectives add Hearts health"
+	execute console command "/scoreboard objectives setdisplay list Hearts"
+	execute console command "/scoreboard objectives add Kill playerKillCount"
+	execute console command "/scoreboard objectives setdisplay sidebar Kill"
+	
+on right click with compass:
+    if player has a compass named "&c네비게이션":
+        execute player command "/나침반"
+
+command /나침반:
+	cooldown : 15 seconds
+	cooldown message : &c네비게이션이 &c꺼졌다..
+	trigger:
+		loop players in radius 200 of player:
+			if loop-player's name is not "%player%":
+				loop-player's gamemode is not spectator:
+					add 1 to {_n}
+					set {_players::%{_n}%} to loop-player
+					set {_locs::%{_n}%} to distance between loop-player and player
+				if {_n} is greater than 0:
+					send "&7&m---------------&8[&c&l네비게이션&8]&7&m--------------"
+					loop {_players::*}:
+						add 1 to {_m}
+						message "&c%loop-value-1% &7이 &c%{_locs::%{_m}%}% &7만큼 떨어져있습니다."
+						play sound "minecraft:block.wooden_trapdoor.open" with volume 50 with pitch 1 at player for player
+				else:
+					message "&7주변에 아무도 없네."
+			
+on first join:
+    give player 1 compass named "&c네비게이션"
+    set gamemode of player to spectator
+    teleport player to location at 0, 71, 0 in world "world"
+	
+command /배그:
+	trigger:
+		if player is op:
+			delete {gameEnd}
+
+			broadcast "&l<&c&l공지&r&l>&r 게임이 시작되었습니다."
+			execute op command "/minecraft:gamemode survival @a"
+			execute op command "/rtp @everyone"
+			wait 4 minute
+			broadcast "&l<&c&l공지&r&l>&r 1분후 1차 공간이 제한됩니다."
+			apply haste 5 to all players for 60 seconds
+			wait 1 minute
+			broadcast "&l<&c&l공지&r&l>&r 1차 공간이 제한됩니다."
+			send title "&f&l자기장이 제한됩니다!" with subtitle "&c1500 ~ -1500" to player for 5 seconds
+			execute console command "/worldborder set 3000 180"
+			execute op command "/타이머 180"
+			play sound "minecraft:entity.wither.spawn" with volume 50 with pitch 1 at player for player
+			wait 4 minute
+			broadcast "&l<&c&l공지&r&l>&r 1분후 2차 공간이 제한됩니다."
+			apply haste 5 to all players for 60 seconds
+			wait 1 minute
+			broadcast "&l<&c&l공지&r&l>&r 2차 공간이 제한됩니다."
+			send title "&f&l자기장이 제한됩니다!" with subtitle "&c1000 ~ -1000" to player for 5 seconds
+			execute console command "/worldborder set 2000 180"
+			execute op command "/타이머제거"
+			execute op command "/타이머 180"
+			play sound "minecraft:entity.wither.spawn" with volume 50 with pitch 1 at player for player
+			wait 4 minute
+			broadcast "&l<&c&l공지&r&l>&r 1분후 3차 공간이 제한됩니다."
+			apply haste 5 to all players for 60 seconds
+			wait 1 minute
+			broadcast "&l<&c&l공지&r&l>&r 3차 공간이 제한됩니다."
+			send title "&f&l자기장이 제한됩니다!" with subtitle "&c500 ~ -500" to player for 5 seconds
+			execute console command "/worldborder set 1000 180"
+			execute op command "/타이머제거"
+			execute op command "/타이머 180"
+			play sound "minecraft:entity.wither.spawn" with volume 50 with pitch 1 at player for player
+			wait 4 minute
+			broadcast "&l<&c&l공지&r&l>&r 1분후 4차 공간이 제한됩니다."
+			apply haste 5 to all players for 60 seconds
+			wait 1 minute
+			broadcast "&l<&c&l공지&r&l>&r 4차 공간이 제한됩니다."
+			send title "&f&l자기장이 제한됩니다!" with subtitle "&c200 ~ -200" to player for 5 seconds
+			execute console command "/worldborder set 400 120"
+			execute op command "/타이머제거"
+			execute op command "/타이머 120"
+			play sound "minecraft:entity.wither.spawn" with volume 50 with pitch 1 at player for player
+			wait 2 minute
+			broadcast "&l<&c&l공지&r&l>&r 1분후 5차 공간이 제한됩니다."
+			apply haste 5 to all players for 60 seconds
+			wait 1 minute
+			broadcast "&l<&c&l공지&r&l>&r 5차 공간이 제한됩니다."
+			send title "&f&l자기장이 제한됩니다!" with subtitle "&c50 ~ -50" to player for 5 seconds
+			execute console command "/worldborder set 100 120"
+			execute op command "/타이머제거"
+			execute op command "/타이머 120"
+			play sound "minecraft:entity.wither.spawn" with volume 50 with pitch 1 at player for player
+			wait 2 minute
+			broadcast "&l<&c&l공지&r&l>&r 1분후 마지막 공간이 제한됩니다."
+			apply haste 5 to all players for 60 seconds
+			wait 1 minute
+			broadcast "&l<&c&l공지&r&l>&r 마지막으로 공간이 제한됩니다."
+			send title "&f&l자기장이 제한됩니다!" with subtitle "&c5 ~ -5" to player for 5 seconds
+			execute console command "/worldborder set 10 90"
+			execute op command "/타이머제거"
+			execute op command "/타이머 90"
+			play sound "minecraft:entity.wither.spawn" with volume 50 with pitch 1 at player for player
+			execute console command "/effect give @a[gamemode=survival] minecraft:glowing 100000 1"
+		else:
+			message "나만쓸수잇음" to player
+			
+command /게임종료:
+	trigger:
+		if command sender is op or console:
+			broadcast "&l<&c&l공지&r&l>&r 게임이 끝났습니다."
+			execute console command "/worldborder set 4000 1"
+			#execute console command "/minecraft:tp @a 0 67 0"
+			execute console command "/gamerule keepInventory true"
+		else:
+			message "나만쓸수잇음" to command sender
+			
+on death of player:
+	if {gameEnd} is not set:
+		set gamemode of victim to spectator
+		broadcast "%victim%&c이(가) 탈락했습니다."
+		play sound "block.note_block.bell" with volume 1 and pitch 0.6 for all players
+
+		set {_alive} to 0
+
+		loop all players:
+			if gamemode of loop-player is survival:
+				add 1 to {_alive}
+
+		if {_alive} is 1:
+			send title "&d%attacker%" with subtitle "&e&o유일한 생존자" to all players for 6 seconds
+			play sound "entity.ender_dragon.death" with volume 0.6 for all players
+			set {gameEnd} to true
+
+			execute console command "/게임종료"
+		else if {_alive} is 0:
+			send title "&d헉!" with subtitle "&e&o생존자가 없습니다." to all players for 6 seconds
+			play sound "block.end_portal.spawn" with volume 0.8 for all players
+			set {gameEnd} to true
+
+			execute console command "/게임종료"
+			exit
+		else:
+			exit
+
+		loop all players:
+			if loop-player is not attacker:
+				teleport loop-player to attacker
+
+		loop 6 times:
+			set {_fireworkLoc} to first element of attacker's location
+			add random number between -5 and 5 to x-coord of {_fireworkLoc}
+			add random number between 1 and 2 to y-coord of {_fireworkLoc}
+			add random number between -5 and 5 to z-coord of {_fireworkLoc}
+
+			launch ball large coloured green, yellow and white fading to light red and orange at {_fireworkLoc} with duration 0.1
+
+			wait for 1 seconds
+
+on quit:
+	if gamemode of player is survival:
+		if {gameEnd} is not set:
+			set gamemode of player to spectator
+			broadcast "%player%&c이(가) 탈락했습니다."
+			play sound "block.note_block.bell" with volume 1 and pitch 0.6 for all players
+	
+on join:
+	set gamemode of player to spectator
+	
+every 1 second:
+    loop all players:
+        if loop-player's y coordinate is between 130 and 256:
+            loop-player's gamemode is not spectator:
+                set loop-player's health to 0
+				
+command /중참 [<player>]:
+	trigger:
+		if player is op:
+			execute op command "/rtp %arg-1%"
+			execute op command "/gamemode survival %arg-1%"
+			
+command /math:
+    trigger:
+        set {_count} to size of all players
+        broadcast "%{_count}%"
