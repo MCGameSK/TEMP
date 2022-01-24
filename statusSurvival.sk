@@ -1,0 +1,1142 @@
+#
+#https://github.com/MCGameSK/
+#
+
+
+
+options:
+    #ResourceUrl: "https://www.dropbox.com/sh/gms9clveu9ywcu1/AACRfoIn6wrLV09BZcxsOuTka?dl=1"
+
+    GivingPoint: 10
+
+    Preparing: 60
+    Round01: 340 #time begin to fade
+    Round02: 720
+    Round03: 960
+    Round04: 1050
+    RoundGlow: 1100
+    LavaUp: 1130
+    Duration01: "240" #duration fading area 150
+    Duration02: "180" #duration fading area 100 
+    Duration03: "60" #duration fading area 60
+    Duration04: "30" #duration fading area 30
+    Width01: "2000"
+    Width02: "1000"
+    Width03: "400"
+    Width04: "100"
+    Width05: "20"
+
+    RainbowTridentTag: 573001
+    GrenadeTag: 573002
+    RifleTag: 573003
+    RifleBulletTag: 573004
+    KnifeTag: 573005
+    NotebootsTag: 573006
+    AllGlowTag: 573007
+    FirstAidKitTag: 573008
+    IceballTag: 573009
+    DashShieldTag: 573010
+
+    RifleDelay: 0.2
+    RifleSwapDelay: 1.2
+
+
+
+function JoiningGame(p: player):
+    execute console command "/spreadplayers 0 0 100 %{@Width01} parsed as number / 2% false %{_p}%"
+    set gamemode of {_p} to survival
+    clear {_p}'s inventory
+    clear all potion effects of {_p}
+    apply haste 3 to {_p} for 5 minutes
+    apply night vision to {_p} for 999 days
+    apply saturation 10 to {_p} for 10 seconds
+
+    equip {_p} with {items::basichelmet}
+    equip {_p} with {items::basicchestplate}
+    equip {_p} with {items::basicleggings}
+    equip {_p} with {items::basicboots}
+
+    if {clr::helmet::%{_p}'s uuid%} is not 0:
+        colour {_p}'s helmet {clr::helmet::%{_p}'s uuid%}st element of {colors::*}
+    if {clr::chestplate::%{_p}'s uuid%} is not 0:
+        colour {_p}'s chestplate {clr::chestplate::%{_p}'s uuid%}st element of {colors::*}
+    if {clr::leggings::%{_p}'s uuid%} is not 0:
+        colour {_p}'s leggings {clr::leggings::%{_p}'s uuid%}st element of {colors::*}
+    if {clr::boots::%{_p}'s uuid%} is not 0:
+        colour {_p}'s boots {clr::boots::%{_p}'s uuid%}st element of {colors::*}
+    
+    give {_p} {items::rifle}
+    give {_p} {items::knife}
+    give {_p} 5 of {items::grenade}
+    give {_p} 12 of golden carrot
+
+    loop {extraBullet::%{_p}'s uuid%} times:
+        give {_p} {items::riflebullet}
+    loop {extraTnt::%{_p}'s uuid%} times:
+        give {_p} {items::grenade}
+    loop {extraPickaxe::%{_p}'s uuid%} times:
+        give {_p} {items::effpickaxe}
+
+    set generic max health attribute of {_p} to {maxHealth::%{_p}'s uuid%}
+    set health of {_p} to {maxHealth::%{_p}'s uuid%}
+    set generic knockback resistance attribute of {_p} to {knockbackResistance::%{_p}'s uuid%}
+    set generic armor attribute of {_p} to {armor::%{_p}'s uuid%}
+    set walk speed of {_p} to {speed::%{_p}'s uuid%}
+
+
+on load:
+    delete {items::*}
+    delete {lavaFillingUp}
+
+    set {wools::*} to red wool, orange wool, yellow wool, green wool, light blue wool, blue wool and purple wool
+    set {glass::*} to red stained glass, orange stained glass, yellow stained glass, green stained glass, light blue stained glass, blue stained glass and purple stained glass
+
+    set {colors::*} to white, dark gray, black, aqua, blue, light blue, lime, yellow, red, pink, purple and brown #12 Color
+
+    set {items::rainbowTrident} to trident named "&c&l무&6&l지&e&l개&a&l다&9&l리" with lore "&8&o(소모) 삼지창이 도착한곳까지 무지개다리를 생성" and "&8&o근처 플레이어를 구체 안에 가둡니다."
+    set custom model data of {items::rainbowTrident} to {@RainbowTridentTag}
+
+    set {items::grenade} to tnt named "&c&l수류탄" with lore "&8&o(소모) 좌클로 투척"
+    set custom model data of {items::grenade} to {@GrenadeTag}
+
+    set {items::rifle} to iron horse armor of curse of vanishing named "&3&l자동 권총" with lore "&8&o묵직한 한 방"
+    set custom model data of {items::rifle} to {@RifleTag}
+
+    set {items::riflebullet} to firework star named "&b&l권총 탄약" with lore "&8&o(소모) 기본 탄약"
+    set custom model data of {items::riflebullet} to {@RifleBulletTag}
+
+    set {items::knife} to unbreakable shears of curse of vanishing named "&3&l나비칼" with lore "&8&o호신용 단검"
+    set custom model data of {items::knife} to {@KnifeTag}
+
+    set {items::noteboots} to leather boots of curse of binding named "&b&l♪&c&l분홍신&b&l♪" with lore "&8&o"
+    set custom model data of {items::noteboots} to {@NotebootsTag}
+    colour {items::noteboots} (255, 100, 100)
+
+    set {items::allglow} to light named "&d&l전체 플레이어 발광" with lore "&8&o(소모) 모든 플레이어에게 30초간 발광효과를 줍니다"
+    set custom model data of {items::allglow} to {@AllGlowTag}
+
+    set {items::firstaidkit} to lodestone named "&c&l구급상자" with lore "&8&o(소모) 체력 회복"
+    set custom model data of {items::firstaidkit} to {@FirstAidKitTag}
+
+    set {items::iceball} to snowball named "&b&l얼음보숭이" with lore "&8&o(소모) 피격 장소를 얼립니다"
+    set custom model data of {items::iceball} to {@IceballTag}
+
+    set {items::dashshield} to shield named "&e&l방밀" with lore "&8&o방패사용중 웅크릴시 내구도를 소모하여 대쉬"
+    set custom model data of {items::dashshield} to {@DashShieldTag}
+
+    set {items::basichelmet} to unbreakable leather helmet of protection 10
+    set {items::basicchestplate} to leather chestplate
+    set {items::basicleggings} to leather leggings
+    set {items::basicboots} to leather boots
+
+    set {items::effpickaxe} to stone pickaxe of efficiency 5
+
+
+
+on join:
+    #send resource pack from {@ResourceUrl} with hash "hash" to player
+
+    if {start} is true:
+        set gamemode of player to spectator
+        loop {joins::*}:
+            if loop-value is player:
+                remove loop-value from {joins::*}
+                exit
+    else if {preparing} is true:
+        set gamemode of player to survival
+
+        set {point::%player's uuid%} to {@GivingPoint}
+        set {extraTnt::%player's uuid%} to 0
+        set {extraBullet::%player's uuid%} to 0
+        set {extraPickaxe::%player's uuid%} to 0
+        set {maxHealth::%player's uuid%} to 20
+        set {knockbackResistance::%player's uuid%} to 0
+        set {armor::%player's uuid%} to 0
+        set {speed::%player's uuid%} to 0.2
+
+        message "&e» &a&o준비시간에 &e&l웅크리기 + 손바꾸기 &a&o를 이용해 스텟을 분배합니다." to player
+        message " " to player
+        message "&e» &a&o준비시간 외에는 &c&o스텟 분배가 불가합니다." to player
+        message " " to player
+        message "&e» &f&o철&a&o을 캐면 탄약을 얻습니다." to player
+        message "&e» &6&o금&a&o을 캐면 회복 아이템을 얻습니다." to player
+        message "&e» &b&o다이아&a&o를 캐면 랜덤 장비를 얻습니다." to player
+        message "        &a&l준비시간 &c&l%{startLeft}%초 남음" to player
+
+        set {_joinIt} to true
+        loop {joins::*}:
+            if loop-value is player:
+                set {_joinIt} to false
+        if {_joinIt} is true:
+            add player to {joins::*}
+
+    else:
+        set gamemode of player to survival
+
+
+
+on quit:
+    loop {joins::*}:
+        if loop-value is player:
+            remove loop-value from {joins::*}
+            if {start} is true:
+                broadcast "&c&l%player% 탈락! &c&o%amount of {joins::*}%명 남음"
+
+                if amount of {joins::*} <= 1:
+                    send title "&e&l%first element of {joins::*}%" with subtitle "&d&o유일한 생존자" to all players for 6 seconds
+                    play sound "ui.toast.challenge_complete" with volume 1 for all players
+                    broadcast " "
+                    broadcast " "
+                    broadcast " "
+                    broadcast "        &e&l게임이 종료되었습니다."
+                    broadcast " "
+                    broadcast " "
+                    broadcast " "
+
+                    delete {start}
+                    delete {preparing}
+
+                    loop 6 times:
+                        set {_fireworkLoc} to first element of {joins::*}'s location
+                        add random number between -5 and 5 to x-coord of {_fireworkLoc}
+                        add random number between 1 and 2 to y-coord of {_fireworkLoc}
+                        add random number between -5 and 5 to z-coord of {_fireworkLoc}
+
+                        launch ball large coloured green, yellow and white fading to light red and orange at {_fireworkLoc} with duration 0.1
+                        wait for 1 seconds
+
+
+
+
+on death of player:
+    if {start} is true:
+        loop {joins::*}:
+            if loop-value is player:
+                remove loop-value from {joins::*}
+                broadcast "&c&l%player% 탈락! &c&o%amount of {joins::*}%명 남음"
+                set gamemode of player to spectator
+
+        if amount of {joins::*} <= 1:
+            send title "&e&l%first element of {joins::*}%" with subtitle "&d&o유일한 생존자" to all players for 6 seconds
+            play sound "ui.toast.challenge_complete" with volume 1 for all players
+            broadcast " "
+            broadcast " "
+            broadcast " "
+            broadcast "        &e&l게임이 종료되었습니다."
+            broadcast " "
+            broadcast " "
+            broadcast " "
+
+            delete {start}
+            delete {preparing}
+
+            loop 6 times:
+                set {_fireworkLoc} to first element of {joins::*}'s location
+                add random number between -5 and 5 to x-coord of {_fireworkLoc}
+                add random number between 1 and 2 to y-coord of {_fireworkLoc}
+                add random number between -5 and 5 to z-coord of {_fireworkLoc}
+
+                launch ball large coloured green, yellow and white fading to light red and orange at {_fireworkLoc} with duration 0.1
+                wait for 1 seconds
+    else:
+        cancel event
+
+
+
+on death of creeper:
+    clear drops
+    if chance of 50%:
+        drop random integer between 3 and 10 of {items::riflebullet}
+
+
+
+on spawn of zombie:
+    set generic armor attribute of event-entity to 15
+    set generic attack damage attribute of event-entity to 6
+    set generic knockback resistance attribute of event-entity to 0.4
+
+on spawn of creeper:
+    set generic armor attribute of event-entity to 10
+    set generic knockback resistance attribute of event-entity to 0.2
+
+on spawn of skeleton:
+    set generic armor attribute of event-entity to 15
+    set generic knockback resistance attribute of event-entity to 0.4
+
+on spawn of spider:
+    set generic armor attribute of event-entity to 15
+    set generic attack damage attribute of event-entity to 4
+    set generic knockback resistance attribute of event-entity to 0.2
+
+
+
+on left click:
+    if metadata value "wool" of event-block is true:
+        play sound "block.honey_block.break" with volume 1 at event-block
+        set event-block to air
+        loop 6 times:
+            set {_ppos} to event-location
+            add random number between -0.5 and 0.5 to x-coord of {_ppos}
+            add random number between -0.5 and 0.5 to y-coord of {_ppos}
+            add random number between -0.5 and 0.5 to z-coord of {_ppos}
+            show spell at {_ppos}
+        exit
+
+
+
+    if custom model data of player's tool is {@GrenadeTag}:
+        cancel event
+
+        set {_tempSlot} to player's tool
+        set {_i} to item amount of {_tempSlot} - 1
+        set player's tool to {_i} of {_tempSlot}
+
+        spawn primed tnt at player's head
+        push last spawned entity in direction of the player at speed 1
+        exit
+
+
+
+on right click:
+    if custom model data of player's tool is {@GrenadeTag}:
+        cancel event
+        exit
+    if custom model data of player's offhand tool is {@GrenadeTag}:
+        cancel event
+        exit
+
+    if custom model data of player's tool is {@AllGlowTag}:
+        cancel event
+
+        set {_tempSlot} to player's tool
+        set {_i} to item amount of {_tempSlot} - 1
+        set player's tool to {_i} of {_tempSlot}
+
+        apply glowing to {joins::*} for 30 seconds
+        broadcast "&9&l누군가 전체 발광 아이템을 사용했습니다!"
+        play sound "entity.llama.spit" with volume 1 and pitch 1.4 for all players
+
+        exit
+    if custom model data of player's offhand tool is {@AllGlowTag}:
+        cancel event
+
+        set {_tempSlot} to player's offhand tool
+        set {_i} to item amount of {_tempSlot} - 1
+        set player's tool to {_i} of {_tempSlot}
+
+        apply glowing to {joins::*} for 30 seconds
+        broadcast "&9&l누군가 전체 발광 아이템을 사용했습니다!"
+        play sound "entity.llama.spit" with volume 1 and pitch 1.4 for all players
+
+        exit
+
+
+
+    if custom model data of player's tool is {@RifleTag}:
+        cancel event
+        if {delay::%player's uuid%} is not set:
+            if {swap::%player's uuid%} is not set:
+
+                loop 36 times:
+                    if 1 of slot loop-number - 1 of inventory of player is {items::riflebullet}:
+                        add item amount of slot loop-number - 1 of inventory of player to {_bulletAmount}
+
+                if {_bulletAmount} >= 1:
+                    if {leftForDelay::%player's uuid%} >= 1:
+                        remove 1 from {leftForDelay::%player's uuid%}
+
+                        remove 1 of {items::riflebullet} from inventory of player
+                        set {delay::%player's uuid%} to true
+
+                        shoot arrow at speed 6
+                        play sound "block.ender_chest.open" with volume 1 and pitch 4 at player
+                        play sound "entity.firework_rocket.launch" with volume 1 and pitch 2 at player
+                        play sound "entity.generic.explode" with volume 0.8 and pitch 3 at player
+
+                        wait for {@RifleDelay} seconds
+                        play sound "block.iron_door.open" with volume 1 and pitch 1.6 at player
+                        delete {delay::%player's uuid%}
+                    else:
+                        set {swap::%player's uuid%} to true
+                        play sound "entity.iron_golem.attack" with volume 2 and pitch 2 at player
+                        play sound "block.iron_trapdoor.close" with volume 1 and pitch 1.6 at player
+
+                        wait for {@RifleSwapDelay} seconds
+
+                        set {leftForDelay::%player's uuid%} to 12
+                        delete {swap::%player's uuid%}
+                        play sound "block.iron_door.open" with volume 8 and pitch 1.6 at player
+                        play sound "item.shield.block" with volume 0.5 and pitch 1.5 at player
+                else:
+                    play sound "block.iron_trapdoor.open" with volume 1 and pitch 2 at player
+        exit
+
+
+
+    if custom model data of player's tool is {@FirstAidKitTag}:
+        cancel event
+
+        set {_tempSlot} to player's tool
+        set {_i} to item amount of {_tempSlot} - 1
+        set player's tool to {_i} of {_tempSlot}
+
+        play sound "entity.wandering_trader.drink_potion" with volume 1 at player
+        heal player by 3 hearts
+
+        exit
+    if custom model data of player's offhand tool is {@FirstAidKitTag}:
+        cancel event
+
+        set {_tempSlot} to player's offhand tool
+        set {_i} to item amount of {_tempSlot} - 1
+        set player's offhand tool to {_i} of {_tempSlot}
+
+        play sound "entity.wandering_trader.drink_potion" with volume 1 at player
+        heal player by 3 hearts
+
+        exit
+
+
+
+on player's held item change:
+    set {swap::%player's uuid%} to true
+    delete {delay::%player's uuid%}
+
+    if custom model data of player's tool is {@RifleTag}:
+        if {swap::%player's uuid%} is true:
+            set {leftForDelay::%player's uuid%} to 12
+
+            play sound "entity.iron_golem.attack" with volume 2 and pitch 2 at player
+            play sound "block.iron_trapdoor.close" with volume 1 and pitch 1.6 at player
+
+            wait for {@RifleSwapDelay} seconds
+            play sound "block.iron_door.open" with volume 8 and pitch 1.6 at player
+            play sound "item.shield.block" with volume 0.5 and pitch 1.5 at player
+            delete {swap::%player's uuid%}
+
+
+
+on shoot:
+    if custom model data of item of event-projectile is {@RainbowTridentTag}:
+        loop 10 times:
+            show flash at event-projectile
+            play sound "entity.firework_rocket.large_blast" with volume 1 at event-projectile
+            wait for 4 tick
+
+
+
+    if event-projectile is arrow:
+        if custom model data of shooter's tool is {@RifleTag}:
+            set metadata value "shooter" of event-projectile to shooter
+
+
+
+on projectile hit:
+    if custom model data of item of event-projectile is {@RainbowTridentTag}:
+        launch flickering trailing burst coloured yellow, red and white fading to white and black at event-projectile with duration 0.1
+
+        set {_shooterLoc} to shooter's location
+
+        remove 1 from y-coord of {_shooterLoc}
+
+        loop all blocks between {_shooterLoc} and event-projectile:
+
+            loop all players in radius 5 around loop-block:
+                if loop-player is not shooter:
+                    set {_glass} to random element of {glass::*}
+                    loop all blocks in radius 4 around loop-player:
+                        if distance between block at loop-player and loop-block-2 > 2:
+                            set loop-block-2 to {_glass}
+
+            set loop-value to random element of {wools::*}
+            set metadata value "wool" of loop-value to true
+
+            if chance of 50%:
+                show large explosion at loop-value
+                play sound "entity.generic.explode" with volume 0.2 at loop-value
+
+        delete event-projectile
+
+
+
+    if event-projectile is arrow:
+        if metadata value "shooter" of event-projectile exist:
+            show explosion at event-projectile
+
+            if event-block is any leaves:
+                play sound "block.grass.break" with volume 1 at event-block
+                set event-block to air
+
+            delete event-projectile
+    
+
+
+    if custom model data of item of event-projectile is {@IceballTag}:
+        play sound "block.glass.break" with volume 1 and pitch 0.5 at event-location
+
+        loop all entities in radius 3 around event-location:
+            if loop-entities is not shooter or event-projectile:
+                set block at loop-entity to powder snow
+
+        loop all blocks in radius 3 around event-location:
+            if loop-block is not air:
+                set loop-block to powder snow
+
+
+on damage:
+    if {start} is not set:
+        if victim is a player:
+            cancel event
+            exit
+
+    if event-projectile exist:
+        if event-projectile is arrow:
+            if metadata value "shooter" of event-projectile exist:
+                play sound "block.note_block.harp" with volume 1 and pitch 2 for metadata value "shooter" of event-projectile
+
+    if damage cause is attack:
+        if custom model data of attacker's tool is {@KnifeTag}:
+            play sweep attack at victim's head
+            damage victim by 3 hearts
+
+    if {lavaFillingUp} is true:
+        if damage cause is lava:
+            damage victim by 4 hearts
+
+
+
+on break:
+    if {start} is not set:
+        cancel event
+    else:
+        if event-block is iron ore or deepslate iron ore:
+            if chance of 50%:
+                drop random integer between 1 and 8 of {items::riflebullet} at event-block
+
+        if event-block is diamond ore or deepslate diamond ore:
+            set {_rnd} to random integer between 1 and 100
+
+            if {_rnd} <= 5:
+                drop {items::noteboots} at event-block
+            else if {_rnd} <= 10:
+                drop {items::dashshield} at event-block
+            else if {_rnd} <= 15:
+                drop 4 of {items::iceball} at event-block
+            else if {_rnd} <= 30:
+                drop {items::rainbowTrident} at event-block
+            else if {_rnd} <= 50:
+                drop {items::allglow} at event-block
+                
+        if event-block is gold ore or deepslate gold ore:
+            if chance of 40%:
+                drop {items::firstaidkit}
+
+
+
+on place:
+    if {start} is not set:
+        cancel event
+
+
+
+
+on player move:
+    if custom model data of player's boots is {@NotebootsTag}:
+        play note at player
+
+
+
+every 0.4 seconds:
+    loop all players:
+        if custom model data of loop-player's boots is {@NotebootsTag}:
+            loop 2 times:
+                set {_notePos} to loop-value-1's location
+                add random number between -2 and 2 to x-coord of {_notePos}
+                add random number between -0.5 and 2 to y-coord of {_notePos}
+                add random number between -2 and 2 to z-coord of {_notePos}
+
+                play note at {_notePos}
+
+
+
+every 1 seconds:
+    loop all players:
+        if {dashCooldown::%loop-player's uuid%} is true:
+            remove 1 from {dashCooldownTimer::%loop-player's uuid%}
+            send action bar "&7&o대쉬 쿨타임 &7&l%{dashCooldownTimer::%loop-player's uuid%}%" to loop-player
+
+            if {dashCooldownTimer::%loop-player's uuid%} <= 0:
+                delete {dashCooldown::%loop-player's uuid%}
+
+    if {preparing} is true:
+        if {startLeft} is {@Preparing}:
+            send title "&7곧 시작합니다" with subtitle "&c%{startLeft}%&7초 남음" to {joins::*} for 5 seconds
+            loop 30 times:
+                broadcast " "
+            broadcast "&e» &a&o준비시간에 &e&l웅크리기 + 손바꾸기 &a&o를 이용해 스텟을 분배합니다."
+            broadcast " "
+            broadcast "&e» &a&o준비시간 외에는 &c&o스텟 분배가 불가합니다."
+            broadcast " "
+            broadcast "&e» &f&o철&a&o을 캐면 &f&o탄약&a&o을 얻습니다."
+            broadcast "&e» &6&o금&a&o을 캐면 &6&o회복 아이템&a&o을 얻습니다."
+            broadcast "&e» &b&o다이아&a&o를 캐면 &b&o랜덤 장비&a&o를 얻습니다."
+            play sound "block.note_block.pling" with volume 1 and pitch 1.4 for {joins::*}
+            wait for 0.1 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 1.4 for {joins::*}
+        
+        if {startLeft} is {@Preparing} - 1:
+            loop 30 times:
+                broadcast " "
+            broadcast "&e» &a&o준비시간에 &e&l웅크리기 + 손바꾸기 &a&o를 이용해 스텟을 분배합니다."
+            broadcast " "
+            broadcast "&e» &a&o준비시간 외에는 &c&o스텟 분배가 불가합니다."
+            broadcast " "
+            broadcast "&e» &f&o철&a&o을 캐면 &f&o탄약&a&o을 얻습니다."
+            broadcast "&e» &6&o금&a&o을 캐면 &6&o회복 아이템&a&o을 얻습니다."
+            broadcast "&e» &b&o다이아&a&o를 캐면 &b&o랜덤 장비&a&o를 얻습니다."
+        if {startLeft} is {@Preparing} - 2:
+            loop 30 times:
+                broadcast " "
+            broadcast "&e» &a&o준비시간에 &e&l웅크리기 + 손바꾸기 &a&o를 이용해 스텟을 분배합니다."
+            broadcast " "
+            broadcast "&e» &a&o준비시간 외에는 &c&o스텟 분배가 불가합니다."
+            broadcast " "
+            broadcast "&e» &f&o철&a&o을 캐면 &f&o탄약&a&o을 얻습니다."
+            broadcast "&e» &6&o금&a&o을 캐면 &6&o회복 아이템&a&o을 얻습니다."
+            broadcast "&e» &b&o다이아&a&o를 캐면 &b&o랜덤 장비&a&o를 얻습니다."
+
+        if {startLeft} is round({@Preparing} / 3):
+            loop {joins::*}:
+                broadcast "&e&o%loop-value% 참가됨"
+
+        if {startLeft} <= 5:
+            send title "%{startLeft}%" to {joins::*} for 1 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for {joins::*}
+            
+        if {startLeft} <= 0:
+            send title "&e&l시작" with subtitle "&7현재 자기장: &a-%round({@Width01} parsed as number / 2)% ~ %round({@Width01} parsed as number / 2)%" to {joins::*} for 3 seconds
+            play sound "block.end_portal.spawn" with volume 1 and pitch 0.6 for {joins::*}
+            set {start} to true
+            delete {preparing}
+            set {gameTime} to 0
+
+            execute console command "/minecraft:gamerule sendCommandFeedback false"
+            execute console command "/minecraft:worldborder center 0 0"
+            execute console command "/minecraft:worldborder damage amount 0.5"
+            execute console command "/minecraft:worldborder set %{@Width01}%"
+
+            execute console command "/minecraft:time set 0"
+
+            loop {joins::*}:
+                JoiningGame(loop-value)
+
+
+        remove 1 from {startLeft}
+
+
+
+    if {start} is true:
+        add 1 to {gameTime}
+
+        if {gameTime} is 10:
+            send title "&c&lPhase 1" with subtitle "&7자기장 축소까지 &c%{@Round01} - {gameTime}%&7초" to all players for 5 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+
+
+
+        if {gameTime} is {@Round01}:
+            execute console command "/minecraft:worldborder set %{@Width02}% %{@Duration01}%"
+
+            send title "&c자기장이 축소됩니다!" with subtitle "&a&l-%round({@Width02} parsed as number / 2)% ~ %round({@Width02} parsed as number / 2)%" to all players for 4 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            wait for 2 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            broadcast " "
+            broadcast "&a&l동굴에서 탈출하려면 &e&l위를 보고 웅크리기 + 손바꾸기"
+            broadcast " "
+
+        if {gameTime} is {@Round01} + {@Duration01} parsed as number:
+            send title "&c&lPhase 2" with subtitle "&7자기장 축소까지 &c%{@Round02} - {gameTime}%&7초" to all players for 5 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+
+
+
+        if {gameTime} is {@Round02}:
+            execute console command "/minecraft:worldborder set %{@Width03}% %{@Duration02}%"
+
+            send title "&c자기장이 축소됩니다!" with subtitle "&a&l-%round({@Width03} parsed as number / 2)% ~ %round({@Width03} parsed as number / 2)%" to all players for 4 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            wait for 2 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            broadcast " "
+            broadcast "&a&l동굴에서 탈출하려면 &e&l위를 보고 웅크리기 + 손바꾸기"
+            broadcast " "
+
+        if {gameTime} is {@Round02} + {@Duration02} parsed as number:
+            send title "&c&lPhase 3" with subtitle "&7자기장 축소까지 &c%{@Round03} - {gameTime}%&7초" to all players for 5 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+
+
+
+        if {gameTime} is {@Round03}:
+            execute console command "/minecraft:worldborder set %{@Width04}% %{@Duration03}%"
+
+            send title "&c자기장이 축소됩니다!" with subtitle "&a&l-%round({@Width04} parsed as number / 2)% ~ %round({@Width04} parsed as number / 2)%" to all players for 4 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            wait for 2 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            broadcast " "
+            broadcast "&a&l동굴에서 탈출하려면 &e&l위를 보고 웅크리기 + 손바꾸기"
+            broadcast " "
+
+        if {gameTime} is {@Round03} + {@Duration03} parsed as number:
+            send title "&c&lLast Phase" with subtitle "&7자기장 축소까지 &c%{@Round04} - {gameTime}%&7초" to all players for 5 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+
+
+
+        if {gameTime} is {@Round04}:
+            execute console command "/minecraft:worldborder set %{@Width05}% %{@Duration04}%"
+
+            send title "&c자기장이 축소됩니다!" with subtitle "&a&l-%round({@Width05} parsed as number / 2)% ~ %round({@Width05} parsed as number / 2)%" to all players for 4 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            wait for 2 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+            broadcast " "
+            broadcast "&a&l동굴에서 탈출하려면 &e&l위를 보고 웅크리기 + 손바꾸기"
+            broadcast " "
+
+
+
+        if {gameTime} is {@RoundGlow}:
+            send title "&e&l발광 적용" to all players for 5 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+
+            apply glowing to {joins::*} for 999 days
+
+
+
+        if {gameTime} is {@LavaUp}:
+            set {lavaFillingUp} to true
+
+            send title "&c&l용암이 차오릅니다" with subtitle "&7Y63도달까지 120초" to all players for 5 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 2 for all players
+
+
+
+every 2 seconds:
+    if {start} is true:
+        if {lavaFillingUp} is true:
+
+            if {lavaLevel} is not set:
+                set {lavaLevel} to 0
+
+            if {lavaLevel} < 63:
+                loop {@Width05} parsed as number + 1 times:
+                    loop {@Width05} parsed as number + 1 times:
+                        set block at location at (loop-number-1) - 11, {lavaLevel}, (loop-number-2) - 11 in world world of first element of {joins::*} to lava
+                
+                add 1 to {lavaLevel}
+
+
+
+on armor change:
+    if custom model data of player's boots is {@NotebootsTag}:
+        set walk speed of player to 0.4
+    if custom model data of player's boots is not {@NotebootsTag}:
+        set walk speed of player to {speed::%player's uuid%}
+
+
+
+on inventory click:
+    if current inventory of player is {menu::%player's uuid%}:
+        cancel event
+
+        if {preparing} is true:
+
+            if index of clicked slot is 10:
+                if click type is left mouse button:
+                    remove 1 from {clr::helmet::%player's uuid%}
+                if click type is right mouse button:
+                    add 1 to {clr::helmet::%player's uuid%}
+
+                if {clr::helmet::%player's uuid%} >= 13:
+                    set {clr::helmet::%player's uuid%} to 0
+                if {clr::helmet::%player's uuid%} <= -1:
+                    set {clr::helmet::%player's uuid%} to 12
+
+                execute player command "/wsMenu"
+            
+            if index of clicked slot is 19:
+                if click type is left mouse button:
+                    remove 1 from {clr::chestplate::%player's uuid%}
+                if click type is right mouse button:
+                    add 1 to {clr::chestplate::%player's uuid%}
+
+                if {clr::chestplate::%player's uuid%} >= 13:
+                    set {clr::chestplate::%player's uuid%} to 0
+                if {clr::chestplate::%player's uuid%} <= -1:
+                    set {clr::chestplate::%player's uuid%} to 12
+
+                execute player command "/wsMenu"
+
+            if index of clicked slot is 28:
+                if click type is left mouse button:
+                    remove 1 from {clr::leggings::%player's uuid%}
+                if click type is right mouse button:
+                    add 1 to {clr::leggings::%player's uuid%}
+
+                if {clr::leggings::%player's uuid%} >= 13:
+                    set {clr::leggings::%player's uuid%} to 0
+                if {clr::leggings::%player's uuid%} <= -1:
+                    set {clr::leggings::%player's uuid%} to 12
+
+                execute player command "/wsMenu"
+
+            if index of clicked slot is 37:
+                if click type is left mouse button:
+                    remove 1 from {clr::boots::%player's uuid%}
+                if click type is right mouse button:
+                    add 1 to {clr::boots::%player's uuid%}
+
+                if {clr::boots::%player's uuid%} >= 13:
+                    set {clr::boots::%player's uuid%} to 0
+                if {clr::boots::%player's uuid%} <= -1:
+                    set {clr::boots::%player's uuid%} to 12
+
+                execute player command "/wsMenu"
+
+
+
+            if index of clicked slot is 16:
+                if {point::%player's uuid%} >= 1:
+                    remove 1 from {point::%player's uuid%}
+                    add 2 to {maxHealth::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    execute player command "/wsMenu"
+
+            if index of clicked slot is 25:
+                if {point::%player's uuid%} >= 1:
+                    remove 1 from {point::%player's uuid%}
+                    add 0.08 to {knockbackResistance::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    execute player command "/wsMenu"
+
+            if index of clicked slot is 34:
+                if {point::%player's uuid%} >= 1:
+                    remove 1 from {point::%player's uuid%}
+                    add 1 to {armor::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    execute player command "/wsMenu"
+
+            if index of clicked slot is 43:
+                if {point::%player's uuid%} >= 1:
+                    remove 1 from {point::%player's uuid%}
+                    add 0.015 to {speed::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    execute player command "/wsMenu"
+
+
+
+            if index of clicked slot is 48:
+                if {point::%player's uuid%} >= 4:
+                    remove 4 from {point::%player's uuid%}
+                    add 1 to {extraPickaxe::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    message "&a&l구매 완료! 시작시 지급됩니다."
+                    execute player command "/wsMenu"
+
+            if index of clicked slot is 49:
+                if {point::%player's uuid%} >= 1:
+                    remove 1 from {point::%player's uuid%}
+                    add 2 to {extraBullet::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    message "&a&l구매 완료! 시작시 지급됩니다."
+                    execute player command "/wsMenu"
+
+            if index of clicked slot is 50:
+                if {point::%player's uuid%} >= 1:
+                    remove 1 from {point::%player's uuid%}
+                    add 3 to {extraTnt::%player's uuid%}
+                    play sound "entity.experience_orb.pickup" with volume 1 and pitch 1.4 for player
+                    message "&a&l구매 완료! 시작시 지급됩니다."
+                    execute player command "/wsMenu"
+
+        else:
+            message "&c&o스텟 분배는 준비시간외 불가합니다"
+
+
+
+on swap hand item:
+    if player is sneaking:
+        cancel event
+        
+        if pitch of player < -80:
+            if y-coord of player <= 48:
+                set {_dest::%player's uuid%} to location of player
+                set {_fine::%player's uuid%} to false
+                set {_routine::%player's uuid%} to 0
+
+                while {_fine::%player's uuid%} is false:
+                    add 1 to {_routine::%player's uuid%}
+                    if {_routine::%player's uuid%} > 256:
+                        message "&c&l이동할 위치를 찾지 못했습니다."
+                        exit
+
+                    add 1 to y-coord of {_dest::%player's uuid%}
+
+                    set {_check::%player's uuid%} to {_dest::%player's uuid%}
+                    set {_blockExist::%player's uuid%} to false
+                    loop 12 times:
+                        add 1 to y-coord of {_check::%player's uuid%}
+                        if block at {_check::%player's uuid%} is not air:
+                            set {_blockExist::%player's uuid%} to true
+                    
+                    if {_blockExist::%player's uuid%} is false:
+                        set {_fine::%player's uuid%} to true
+
+                        if {_routine::%player's uuid%} <= 1:
+                            message "&c&l위 공간이 충분히 비어있습니다."
+                            exit
+
+                        set {_playerExist::%player's uuid%} to false
+                        loop all players in radius 10 around {_dest::%player's uuid%}:
+                            if loop-player is not player:
+                                set {_playerExist::%player's uuid%} to true
+
+                        if {_playerExist::%player's uuid%} is false:
+                            message "&a&l최대한 위로 이동합니다. &c&l발광 패널티&a&l가 잠시 적용됩니다."
+
+                            set block at {_dest::%player's uuid%} to cobblestone
+
+                            add 1 to y-coord of {_dest::%player's uuid%}
+                            set x-coord of {_dest::%player's uuid%} to floor(x-coord of {_dest::%player's uuid%}) + 0.5
+                            set z-coord of {_dest::%player's uuid%} to floor(z-coord of {_dest::%player's uuid%}) + 0.5
+
+                            teleport player to {_dest::%player's uuid%}
+                            apply glowing to player for 10 seconds
+                            play sound "item.chorus_fruit.teleport" with volume 1 at {_dest::%player's uuid%}
+                        else:
+                            message "&c&l목표지점 주변에 플레이어가 있어 이동이 취소됩니다."
+            else:
+                message "&c&lY48 이하에서만 위로 올라갈수 있습니다."
+            
+            exit
+
+        execute player command "/wsMenu"
+
+
+
+on sneak toggle:
+    if player is not sneaking:
+        if player is blocking with shield:
+            if custom model data of player's tool is {@DashShieldTag}:
+                if {dashCooldown::%player's uuid%} is not set:
+                    set {dashCooldown::%player's uuid%} to true
+                    set {dashCooldownTimer::%player's uuid%} to 10
+
+                    damage tool by 30
+                    if durability of player's tool >= max durability of player's tool:
+                        play sound "item.shield.break" with volume 1 at player
+                        set player's tool to air
+
+                    set {_dashDirection} to horizontal facing of player
+                    push player {_dashDirection} at speed 4
+
+                    play sound "entity.iron_golem.hurt" with volume 1 and pitch 1.5 at player
+                    loop all entities in radius 2 around player:
+                        if loop-entity is not player:
+                            damage loop-entity by 1 hearts
+                    wait for 0.1 seconds
+                    play sound "entity.iron_golem.hurt" with volume 1 and pitch 1.5 at player
+                    loop all entities in radius 2 around player:
+                        if loop-entity is not player:
+                            damage loop-entity by 1 hearts
+                    wait for 0.1 seconds
+                    play sound "entity.iron_golem.hurt" with volume 1 and pitch 1.5 at player
+                    loop all entities in radius 2 around player:
+                        if loop-entity is not player:
+                            damage loop-entity by 1 hearts
+                    wait for 0.1 seconds
+                    play sound "entity.iron_golem.hurt" with volume 1 and pitch 1.5 at player
+                    loop all entities in radius 2 around player:
+                        if loop-entity is not player:
+                            damage loop-entity by 1 hearts
+
+            if custom model data of player's offhand tool is {@DashShieldTag}:
+                message "&c&o대쉬는 주 손에 있을때만 사용할수 있습니다."
+
+
+
+command /wsReady:
+    trigger:
+        if command sender is console or op:
+            if {start} is not set:
+                if {preparing} is not set:
+                    set {preparing} to true
+                    set {startLeft} to {@Preparing}
+                    delete {joins::*}
+                    delete {lavaFillingUp}
+                    delete {lavaLevel}
+                    loop all players:
+                        set gamemode of loop-player to survival
+                        add loop-player to {joins::*}
+
+                        set {point::%loop-player's uuid%} to {@GivingPoint}
+                        set {extraTnt::%loop-player's uuid%} to 0
+                        set {extraBullet::%loop-player's uuid%} to 0
+                        set {extraPickaxe::%loop-player's uuid%} to 0
+                        set {maxHealth::%loop-player's uuid%} to 20
+                        set {knockbackResistance::%loop-player's uuid%} to 0
+                        set {armor::%loop-player's uuid%} to 0
+                        set {speed::%loop-player's uuid%} to 0.2
+                else:
+                    message "&c&o이미 게임이 준비중입니다."
+            else:
+                message "&c&o이미 게임이 시작되었습니다."
+        else:
+            message "&c&oOP required"
+
+
+
+command /wsForceJoin [<player>]:
+    trigger:
+        if player is op:
+            if {start} is true:
+                loop {joins::*}:
+                    if arg 1 is loop-value:
+                        message "&c&o이미 참가된 플레이어입니다."
+                        exit
+
+                add arg 1 to {joins::*}
+                message "&e» &f&o철&a&o을 캐면 탄약을 얻습니다." to arg 1
+                message "&e» &6&o금&a&o을 캐면 회복 아이템을 얻습니다." to arg 1
+                message "&e» &b&o다이아&a&o를 캐면 랜덤 장비를 얻습니다." to arg 1
+                JoiningGame(arg 1)
+                broadcast "&e&o%arg 1% 난입"
+            else:
+                message "&c&o게임이 시작되지 않았습니다."
+            
+        else:
+            message "&c&oOP required"
+
+
+
+command /wsReset:
+    trigger:
+        if command sender is console or op:
+            send title "&c게임 리셋" to all players for 3 seconds
+            delete {start}
+            delete {preparing}
+            delete {joins::*}
+            delete {startLeft}
+            delete {gameTime}
+            delete {lavaFillingUp}
+            delete {lavaLevel}
+            execute console command "/minecraft:worldborder center 0 0"
+            execute console command "/minecraft:worldborder damage amount 0.5"
+            execute console command "/minecraft:worldborder set %{@Width01}%"
+        else:
+            message "&c&oOP required"
+
+
+
+command /wsItems [<player>]:
+    trigger:
+        if player is op:
+            loop {items::*}:
+                if loop-value is {items::riflebullet}:
+                    give (arg 1) 36 of loop-value
+                else:
+                    give (arg 1) loop-value
+        else:
+            message "&c&oOP required"
+
+
+
+command /wsMenu:
+    trigger:
+        if {clr::helmet::%player's uuid%} is not set:
+            set {clr::helmet::%player's uuid%} to 0
+
+        if {clr::chestplate::%player's uuid%} is not set:
+            set {clr::chestplate::%player's uuid%} to 0
+
+        if {clr::leggings::%player's uuid%} is not set:
+            set {clr::leggings::%player's uuid%} to 0
+
+        if {clr::boots::%player's uuid%} is not set:
+            set {clr::boots::%player's uuid%} to 0
+
+
+
+        if {maxHealth::%player's uuid%} is not set:
+            set {maxHealth::%player's uuid%} to 20
+
+        if {knockbackResistance::%player's uuid%} is not set:
+            set {knockbackResistance::%player's uuid%} to 0
+
+        if {armor::%player's uuid%} is not set:
+            set {armor::%player's uuid%} to 0
+
+        if {speed::%player's uuid%} is not set:
+            set {speed::%player's uuid%} to 0.2
+
+        
+
+        set {menu::%player's uuid%} to chest inventory with 6 rows named "&4Status"
+
+        
+        set {_helmet} to leather helmet named "&e모자 색상 변경" with lore "&7좌클 / 우클"
+        if {clr::helmet::%player's uuid%} is not 0:
+            colour {_helmet} {clr::helmet::%player's uuid%}st element of {colors::*}
+        set slot 10 of {menu::%player's uuid%} to {_helmet}
+
+        set {_chestplate} to leather chestplate named "&e조끼 색상 변경" with lore "&7좌클 / 우클"
+        if {clr::chestplate::%player's uuid%} is not 0:
+            colour {_chestplate} {clr::chestplate::%player's uuid%}st element of {colors::*}
+        set slot 19 of {menu::%player's uuid%} to {_chestplate}
+
+        set {_leggings} to leather leggings named "&e바지 색상 변경" with lore "&7좌클 / 우클"
+        if {clr::leggings::%player's uuid%} is not 0:
+            colour {_leggings} {clr::leggings::%player's uuid%}st element of {colors::*}
+        set slot 28 of {menu::%player's uuid%} to {_leggings}
+
+        set {_boots} to leather boots named "&e장화 색상 변경" with lore "&7좌클 / 우클"
+        if {clr::boots::%player's uuid%} is not 0:
+            colour {_boots} {clr::boots::%player's uuid%}st element of {colors::*}
+        set slot 37 of {menu::%player's uuid%} to {_boots}
+
+        set slot 22 of {menu::%player's uuid%} to skull of player named "&f&l%player%" with lore " " and "&e보유 Point: &f%{point::%player's uuid%}%" and " " and "&e체력 &f+%{maxHealth::%player's uuid%}%" and "&e넉백저항 &f+%{knockbackResistance::%player's uuid%}%" and "&e방어 &f+%{armor::%player's uuid%}%" and "&e속도 &f+%{speed::%player's uuid%}%"
+
+        set slot 16 of {menu::%player's uuid%} to nether star named "&c&l+최대 체력" with lore "&ePoint 1" and "&7최대 체력 증가"
+        set slot 25 of {menu::%player's uuid%} to shield named "&c&l+넉백 저항" with lore "&ePoint 1" and "&7넉백 저항 증가"
+        set slot 34 of {menu::%player's uuid%} to netherite chestplate named "&c&l+방어력" with lore "&ePoint 1" and "&7방어력 증가"
+        set slot 43 of {menu::%player's uuid%} to feather named "&c&l+이동 속도" with lore "&ePoint 1" and "&7이동 속도 증가"
+
+        set slot 48 of {menu::%player's uuid%} to stone pickaxe named "&6&l효율 곡괭이" with lore "&ePoint 4" and "&7효율5 돌곡괭이 구매"
+        set slot 49 of {menu::%player's uuid%} to firework star named "&6&l권총 탄약" with lore "&ePoint 1" and "&7탄약x2 구매"
+        set slot 50 of {menu::%player's uuid%} to tnt named "&6&l수류탄" with lore "&ePoint 1" and "&7수류탄x3 구매"
+
+        open {menu::%player's uuid%} to player
+
+
+
+command /wsDebug:
+    trigger:
+        if command sender is console or op:
+            message "{start} %{start}%" to sender
+            message "{preparing} %{preparing}%" to sender
+            message "{startLeft} %{startLeft}%" to sender
+            message "{gameTime} %{gameTime}%" to sender
+            loop {joins::*}:
+                message "{joins::*} %loop-value%" to sender
+        else:
+            message "&c&oOP required" to sender
+
+
+
+command /wsTest:
+    trigger:
+        if player is op:
+            set {lavaFillingUp} to true
